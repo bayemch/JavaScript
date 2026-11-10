@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>To-do list</title>
+</head>
+
+<body>
+  <main>
+    <h1>Tugas saya</h1>
+    <p id="info"></p>
+    <form id="form">
+      <input type="text" id="isi" placeholder="Tulis tugas baru" required>
+      <button type="submit">Tambah</button>
+    </form>
+    <ul id="daftar"></ul>
+  </main>
+
+  <script>
+    // 1. Ambil elemen dari HTML
+    const form = document.getElementById('form');
+    const isi = document.getElementById('isi');
+    const daftar = document.getElementById('daftar');
+    const info = document.getElementById('info');
+
+    // 2. Data: array berisi objek { teks, selesai }
+    let tugas = [];
+    try {tugas = JSON.parse(localStorage.getItem('tugas')) || [];} catch (e) { }
+
+    // 3. Simpan data ke localStorage (teks, jadi diubah dulu dengan JSON.stringify)
+    function simpan() {
+      try {localStorage.setItem('tugas', JSON.stringify(tugas));} catch (e) { }
+    }
+
+    // 4. Gambar ulang seluruh daftar dari data
+    function tampilkan() {
+      daftar.innerHTML = '';
+      tugas.forEach(function (t, i) {
+        const li = document.createElement('li');
+
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.checked = t.selesai;
+        cb.onchange = function () {t.selesai = cb.checked; simpan(); tampilkan();};
+
+        const teks = document.createElement('span');
+        teks.textContent = t.teks;
+        if (t.selesai) teks.className = 'selesai';
+
+        const hapus = document.createElement('button');
+        hapus.textContent = 'Hapus';
+        hapus.onclick = function () {tugas.splice(i, 1); simpan(); tampilkan();};
+
+        li.append(cb, teks, hapus);
+        daftar.append(li);
+      });
+      const selesai = tugas.filter(function (t) {return t.selesai;}).length;
+      info.textContent = tugas.length ? selesai + ' dari ' + tugas.length + ' tugas selesai' : 'Belum ada tugas. Tambahkan yang pertama.';
+    }
+
+    // 5. Saat form dikirim: tambah tugas baru
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const teks = isi.value.trim();
+      if (!teks) return;
+      tugas.push({teks: teks, selesai: false});
+      isi.value = '';
+      simpan();
+      tampilkan();
+    });
+
+    tampilkan();
+  </script>
+</body>
+
+</html>
