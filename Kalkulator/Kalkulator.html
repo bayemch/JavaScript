@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kalkulator</title>
+<style>
+:root{--bg:#f3f6f1;--card:#ffffff;--ink:#1d2b24;--muted:#66756d;--accent:#2f6f5e;--onaccent:#ffffff;--line:#d9e2dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a17;--card:#1e2723;--ink:#e6efe9;--muted:#93a39a;--accent:#6fc2a8;--onaccent:#141a17;--line:#2e3a34;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141a17;--card:#1e2723;--ink:#e6efe9;--muted:#93a39a;--accent:#6fc2a8;--onaccent:#141a17;--line:#2e3a34;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:20px/1.4 "Trebuchet MS",system-ui,sans-serif}
+main{max-width:360px;margin:0 auto;padding:24px 16px 48px}
+#layar{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin-bottom:12px;text-align:right;min-height:78px}
+#riwayat{color:var(--muted);font-size:15px;min-height:22px}
+#angka{font-size:34px;font-weight:bold;overflow-x:auto;white-space:nowrap}
+#tombol{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+button{font:inherit;cursor:pointer;padding:16px 0;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+button.op{background:var(--line)}
+button.sama{background:var(--accent);border-color:var(--accent);color:var(--onaccent);font-weight:bold}
+button.lebar{grid-column:span 2}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+  <div id="layar">
+    <div id="riwayat"></div>
+    <div id="angka">0</div>
+  </div>
+  <div id="tombol">
+    <button class="op" data-aksi="hapus">C</button>
+    <button class="op" data-aksi="mundur">⌫</button>
+    <button class="op" data-op="%">%</button>
+    <button class="op" data-op="/">÷</button>
+    <button data-angka="7">7</button>
+    <button data-angka="8">8</button>
+    <button data-angka="9">9</button>
+    <button class="op" data-op="*">×</button>
+    <button data-angka="4">4</button>
+    <button data-angka="5">5</button>
+    <button data-angka="6">6</button>
+    <button class="op" data-op="-">−</button>
+    <button data-angka="1">1</button>
+    <button data-angka="2">2</button>
+    <button data-angka="3">3</button>
+    <button class="op" data-op="+">+</button>
+    <button data-angka="0" class="lebar">0</button>
+    <button data-angka=".">,</button>
+    <button class="sama" data-aksi="sama">=</button>
+  </div>
+</main>
+
+<script>
+// 1. Elemen layar
+const angkaEl = document.getElementById('angka');
+const riwayatEl = document.getElementById('riwayat');
+
+// 2. State: tiga hal yang perlu diingat kalkulator
+let sekarang = '0';      // angka yang sedang diketik (teks)
+let sebelumnya = null;   // angka pertama, sebelum operator
+let operator = null;     // +, -, *, /, %
+
+// 3. Fungsi hitung: dua angka + satu operator
+function hitung(a, b, op) {
+  if (op === '+') return a + b;
+  if (op === '-') return a - b;
+  if (op === '*') return a * b;
+  if (op === '/') return b === 0 ? 'Error' : a / b;
+  if (op === '%') return a % b;
+}
+
+// 4. Tampilkan state ke layar
+function tampilkan() {
+  angkaEl.textContent = sekarang.replace('.', ',');
+  riwayatEl.textContent = operator ? sebelumnya + ' ' + operator : '';
+}
+
+// 5. Ketik angka
+function ketikAngka(a) {
+  if (sekarang === 'Error') sekarang = '0';
+  if (a === '.' && sekarang.includes('.')) return;
+  sekarang = (sekarang === '0' && a !== '.') ? a : sekarang + a;
+}
+
+// 6. Pilih operator
+function pilihOperator(op) {
+  if (sekarang === 'Error') return;
+  if (operator) sama();            // kalau sudah ada operator, hitung dulu
+  sebelumnya = parseFloat(sekarang);
+  operator = op;
+  sekarang = '0';
+}
+
+// 7. Tombol sama dengan
+function sama() {
+  if (!operator || sekarang === 'Error') return;
+  const hasil = hitung(sebelumnya, parseFloat(sekarang), operator);
+  sekarang = hasil === 'Error' ? 'Error' : String(Math.round(hasil * 1e10) / 1e10);
+  operator = null;
+  sebelumnya = null;
+}
+
+// 8. Satu pendengar untuk semua tombol
+document.getElementById('tombol').addEventListener('click', function (e) {
+  const t = e.target.closest('button');
+  if (!t) return;
+  if (t.dataset.angka) ketikAngka(t.dataset.angka);
+  else if (t.dataset.op) pilihOperator(t.dataset.op);
+  else if (t.dataset.aksi === 'sama') sama();
+  else if (t.dataset.aksi === 'hapus') { sekarang = '0'; sebelumnya = null; operator = null; }
+  else if (t.dataset.aksi === 'mundur') sekarang = sekarang.length > 1 && sekarang !== 'Error' ? sekarang.slice(0, -1) : '0';
+  tampilkan();
+});
+
+tampilkan();
+</script>
+</body>
+</html>
