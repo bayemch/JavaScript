@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aplikasi Ujian</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Aplikasi Ujian</h1>
+  <nav>
+    <button id="tabUjian" class="tab aktif">Ujian</button>
+    <button id="tabAdmin" class="tab">Buat Soal</button>
+  </nav>
+
+  <!-- Tampilan ujian diisi oleh script.js -->
+  <section id="ujian"></section>
+
+  <!-- Tampilan pembuat soal -->
+  <section id="admin" hidden>
+    <form id="formSoal">
+      <textarea name="pertanyaan" rows="3" placeholder="Tulis pertanyaan" required></textarea>
+      <input class="opsi-input" placeholder="Opsi A" required>
+      <input class="opsi-input" placeholder="Opsi B" required>
+      <input class="opsi-input" placeholder="Opsi C" required>
+      <input class="opsi-input" placeholder="Opsi D" required>
+      <label>Jawaban benar
+        <select name="kunci">
+          <option value="0">A</option>
+          <option value="1">B</option>
+          <option value="2">C</option>
+          <option value="3">D</option>
+        </select>
+      </label>
+      <button type="submit">Simpan soal</button>
+      <p id="pesan" role="status"></p>
+    </form>
+    <h2>Impor dari Word</h2>
+    <form id="formImpor">
+      <input type="file" name="berkas" accept=".docx" required>
+      <button type="submit">Impor soal</button>
+      <p id="pesanImpor" role="status"></p>
+    </form>
+    <h2>Daftar soal</h2>
+    <ul id="daftar"></ul>
+  </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
