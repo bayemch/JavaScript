@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Hitung Hari – Hitung Mundur &amp; Selisih Tanggal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main>
+    <h1>Hitung Hari</h1>
+    <p class="today" id="today"></p>
+
+    <section class="hero" aria-live="polite">
+      <small id="hl">Belum ada acara</small>
+      <b id="hn">–</b>
+      <em id="hd">Tambahkan acara pertamamu di bawah.</em>
+    </section>
+
+    <h2>Hitung mundur acara</h2>
+    <form id="f">
+      <input type="text" id="name" placeholder="Nama acara, mis. Ulang tahun" maxlength="60" required
+        aria-label="Nama acara">
+      <input type="date" id="date" required aria-label="Tanggal acara">
+      <button class="btn" type="submit">Simpan acara</button>
+    </form>
+    <ul id="list"></ul>
+
+    <h2>Selisih dua tanggal</h2>
+    <div class="row">
+      <label class="lbl">Dari<input type="date" id="a"></label>
+      <label class="lbl">Sampai<input type="date" id="b"></label>
+    </div>
+    <div class="out" id="out" aria-live="polite">Pilih dua tanggal untuk melihat selisihnya.</div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
